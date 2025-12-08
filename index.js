@@ -3,6 +3,7 @@ import alertModel from "./models.js";
 import { MongoClient } from "mongodb";
 import admin from "firebase-admin";
 import fs from "fs";
+import { cors } from "cors";
 
 // Load service account JSON safely
 const serviceAccount = JSON.parse(
@@ -20,6 +21,8 @@ const MONGOOSEURI =
 
 const app = express();
 app.use(express.json());
+app.use(cors()); 
+
 
 app.get("/", (req, res) => {
   res.send("server started");
