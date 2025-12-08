@@ -1,47 +1,84 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
+
 const Schema = mongoose.Schema;
-import connect from './db.js';
 
-const alertSchema = new Schema({
-  alertType:{
-    type : String,
-    default : 'Normal'
-  } ,
-  machineName: String,
-  machine_defect_url: String,
-  machine_desc: String,
-  machine_location: { 
-    type : String
-   },
-  machine_under_maintainance: 
+// ---------------- ALERT SCHEMA ----------------
+const alertSchema = new Schema(
   {
-    type : Boolean,
-    default : false
+    alertType: {
+      type: String,
+      default: "Normal",
+    },
+    machineName: {
+      type: String,
+      required: true,
+    },
+    machine_defect_url: {
+      type: String,
+      default: null,
+    },
+    machine_desc: {
+      type: String,
+      default: "",
+    },
+    machine_location: {
+      type: String,
+      required: true,
+    },
+    machine_under_maintainance: {
+      type: Boolean,
+      default: false,
+    },
+    machine_maintainance_status: {
+      type: String,
+      enum: ["Pending", "Progress", "Resolved"],
+      default: "Pending",
+    },
   },
-  machine_maintainance_status: {
-    type : String,
-    enum : ["Pending" ,"Progress"  ,"Resolved"],
-    default : "Pending"
-  }
-});
+  { timestamps: true }
+);
 
+export const alertModel = mongoose.model("Alert", alertSchema);
 
-const alertModel = mongoose.model("Alert" ,alertSchema)
-export default alertModel;
+// ---------------- USER SCHEMA ----------------
+const userSchema = new Schema(
+  {
+    firstname: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    lastname: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    role: {
+      type: String,
+      enum: ["trainee", "admin"],
+      default: "trainee",
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    FCM_TOKEN: {
+      type: String,
+      default: null,
+    },
+  },
+  { timestamps: true }
+);
 
-const data = {
-    alertType : "Normal",
-    machineName : 'CNC',
-    machine_defect_url : "https://github.com/anshshr",
-    machine_desc : "desc",
-    machine_location: "home",
-    machine_under_maintainance : false,
-    machine_maintainance_status : "Pending"
-}
-
-// // save the document using the mongoose model
-// alertModel.create(data).then((doc) => {
-//   console.log('Inserted:', doc);
-// }).catch((err) => {
-//   console.error('Insert error:', err);
-// });
+export const userModel = mongoose.model("users", userSchema);
