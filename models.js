@@ -5,7 +5,6 @@ import connect from './db.js';
 const alertSchema = new Schema({
   alertType:{
     type : String,
-    enum : ["Normal" , "Vibration Issue" ,"Overheating", "Pressure Drop" , "Electrical Fault"],
     default : 'Normal'
   } ,
   machineName: String,
@@ -14,10 +13,15 @@ const alertSchema = new Schema({
   machine_location: { 
     type : String
    },
-  machine_under_maintainance: Boolean,
+  machine_under_maintainance: 
+  {
+    type : Boolean,
+    default : false
+  },
   machine_maintainance_status: {
     type : String,
-    enum : ["Pending" ,"Progress"  ,"Resolved"]
+    enum : ["Pending" ,"Progress"  ,"Resolved"],
+    default : "Pending"
   }
 });
 

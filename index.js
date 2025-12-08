@@ -53,16 +53,15 @@ app.post("/postAlert", async (req, res) => {
       machine_under_maintainance,
       machine_maintainance_status,
     };
-    await alertModel.insertOne(data);
+    await alertModel.create(data);
     res.status(200).json({
       message: "Succesfully added the machine alert details",
     });
   } catch (error) {
-    res.status(400),
-      json({
-        message: "Unable to save the machine details",
-        error,
-      });
+    res.status(400).json({
+      message: "Unable to save the machine details",
+      error: error.message,
+    });
   }
 });
 
@@ -75,11 +74,10 @@ app.get("/getAlerts", async (req, res) => {
       data,
     });
   } catch (error) {
-    res.status(400),
-      json({
-        message: "Unable to save the machine details",
-        error,
-      });
+    res.status(400).json({
+      message: "Unable to fetch the machine details",
+      error: error.message,
+    });
   }
 });
 
