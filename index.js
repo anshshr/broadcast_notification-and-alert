@@ -3,7 +3,7 @@ import cors from "cors";
 import fs from "fs";
 import admin from "firebase-admin";
 import mongoose from "mongoose";
-import { userModel, alertModel } from "./models.js";
+import { userModel, alertModel, machineModel } from "./models.js";
 
 // ----------- FIREBASE SERVICE ACCOUNT LOAD -----------
 const serviceAccountPath = "./serviceAccountKey.json";
@@ -13,9 +13,7 @@ if (!fs.existsSync(serviceAccountPath)) {
   process.exit(1);
 }
 
-const serviceAccount = JSON.parse(
-  fs.readFileSync(serviceAccountPath, "utf8")
-);
+const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"));
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -59,6 +57,57 @@ app.post("/postAlert", async (req, res) => {
       message: "Unable to save alert",
       error: error.message,
     });
+  }
+});
+
+// ---------- MACHINE ROUTES ----------
+// Get all machines
+app.get("/machines", async (req, res) => {
+  try {
+    const machines = await machineModel.find();
+    res.status(200).json({ count: machines.length, data: machines });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create a new machine
+app.post("/machines", async (req, res) => {
+  try {
+    const {
+      alertType,
+      machineName,
+      machine_defect_url,
+      machine_desc,
+      machine_location,
+      machine_under_maintainance,
+      machine_maintainance_status,
+      start_time,
+      end_time,
+    } = req.body;
+
+    if (!machineName || !machine_location || !start_time || !end_time) {
+      return res.status(400).json({
+        error:
+          "Required fields: machineName, machine_location, start_time, end_time",
+      });
+    }
+
+    const machine = await machineModel.create({
+      alertType,
+      machineName,
+      machine_defect_url,
+      machine_desc,
+      machine_location,
+      machine_under_maintainance,
+      machine_maintainance_status,
+      start_time: new Date(start_time),
+      end_time: new Date(end_time),
+    });
+
+    res.status(201).json({ message: "Machine created", machine });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -127,8 +176,7 @@ app.post("/upsert-user", async (req, res) => {
     const { firstname, lastname, role, email, password, verified, FCM_TOKEN } =
       req.body;
 
-    if (!email)
-      return res.status(400).json({ error: "Email is required" });
+    if (!email) return res.status(400).json({ error: "Email is required" });
 
     let user = await userModel.findOne({ email });
 
