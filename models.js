@@ -126,7 +126,7 @@ const userSchema = new Schema(
   {
     firstname: { type: String },
     lastname: { type: String, default: "" },
-    role: { type: String, enum: ["trainee", "admin"], default: "trainee" },
+    role: { type: String, default: "trainee" },
     email: { type: String, unique: true },
     password: { type: String },
     verified: { type: Boolean, default: false },
@@ -136,6 +136,5 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-export const userModel = mongoose.model("users", userSchema);
 
 export const userModel = mongoose.model("users", userSchema);
