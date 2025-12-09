@@ -75,6 +75,7 @@ app.get("/machines", async (req, res) => {
 app.post("/machines", async (req, res) => {
   try {
     const {
+      username,
       alertType,
       machineName,
       machine_defect_url,
@@ -94,6 +95,7 @@ app.post("/machines", async (req, res) => {
     }
 
     const machine = await machineModel.create({
+      username,
       alertType,
       machineName,
       machine_defect_url,
@@ -127,7 +129,6 @@ app.get("/getAlerts", async (req, res) => {
   }
 });
 
-// ---------- BROADCAST NOTIFICATION ----------
 app.post("/broadcast-notification", async (req, res) => {
   try {
     const { title, body } = req.body;
@@ -145,6 +146,8 @@ app.post("/broadcast-notification", async (req, res) => {
         android: {
           priority: "high",
           collapseKey: String(Date.now()),
+          ttl: 86400 * 1000, // 24 hours in milliseconds
+          // OR ttl: "86400s"
         },
       };
 
@@ -169,6 +172,7 @@ app.post("/broadcast-notification", async (req, res) => {
     });
   }
 });
+
 
 // ---------- UPSERT USER ----------
 app.post("/upsert-user", async (req, res) => {

@@ -43,6 +43,10 @@ export const alertModel = mongoose.model("Alert", alertSchema);
 // ---------------- MACHINE SCHEMA ----------------
 const machineSchema = new Schema(
   {
+    username:{
+      type : String,
+      default: "guest",
+    },
     alertType: {
       type: String,
       default: "Normal",
