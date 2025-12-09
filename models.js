@@ -43,8 +43,8 @@ export const alertModel = mongoose.model("Alert", alertSchema);
 // ---------------- MACHINE SCHEMA ----------------
 const machineSchema = new Schema(
   {
-    username: {
-      type: String,
+    username:{
+      type : String,
       default: "guest",
     },
     alertType: {
@@ -90,81 +90,45 @@ const machineSchema = new Schema(
 
 export const machineModel = mongoose.model("MachineDetail", machineSchema);
 
-const userMachineSessionSchema = new Schema(
-  {
-    session_id: {
-      type: String,
-    },
-    session_time: {
-      type: Number,
-    },
-  },
-  { _id: false }
-);
-
-const userMachineUsageSchema = new Schema(
-  {
-    vocational_center_name: {
-      type: String,
-    },
-    vocational_center_location: {
-      type: String,
-    },
-    serial_no: {
-      type: Number,
-    },
-    time_work_done: {
-      type: Number,
-      default: 0,
-    },
-    sessions: [userMachineSessionSchema],
-  },
-  { _id: false }
-);
-
+// ---------------- USER SCHEMA ----------------
 const userSchema = new Schema(
   {
-    firstname: { type: String },
-    lastname: { type: String, default: "" },
-    role: { type: String, default: "trainee" },
-    email: { type: String, unique: true },
-    password: { type: String },
-    verified: { type: Boolean, default: false },
-    FCM_TOKEN: { type: String, default: null },
-    machine_usage_details: [userMachineUsageSchema],
+    firstname: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    lastname: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    role: {
+      type: String,
+      enum: ["trainee", "admin"],
+      default: "trainee",
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    FCM_TOKEN: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );
 
 export const userModel = mongoose.model("users", userSchema);
-
-const adminMachineSchema = new Schema(
-  {
-    isavailable: {
-      type: Boolean,
-      default: true,
-    },
-    machine_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "MachineDetail", // connects to machineModel
-      required: true,
-    },
-  },
-  { _id: false }
-);
-
-const adminSchema = new Schema(
-  {
-    name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, trim: true },
-    password: { type: String, required: true },
-
-    center_city: { type: String, required: true },
-    center_state: { type: String, required: true },
-
-    machines: [adminMachineSchema], // array of machine references
-  },
-  { timestamps: true }
-);
-
-export const adminModel = mongoose.model("admins", adminSchema);
