@@ -43,8 +43,8 @@ export const alertModel = mongoose.model("Alert", alertSchema);
 // ---------------- MACHINE SCHEMA ----------------
 const machineSchema = new Schema(
   {
-    username:{
-      type : String,
+    username: {
+      type: String,
       default: "guest",
     },
     alertType: {
@@ -136,5 +136,35 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-
 export const userModel = mongoose.model("users", userSchema);
+
+const adminMachineSchema = new Schema(
+  {
+    isavailable: {
+      type: Boolean,
+      default: true,
+    },
+    machine_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MachineDetail", // connects to machineModel
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
+const adminSchema = new Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, trim: true },
+    password: { type: String, required: true },
+
+    center_city: { type: String, required: true },
+    center_state: { type: String, required: true },
+
+    machines: [adminMachineSchema], // array of machine references
+  },
+  { timestamps: true }
+);
+
+export const adminModel = mongoose.model("admins", adminSchema);
